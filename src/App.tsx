@@ -82,6 +82,15 @@ import {
   PillarId
 } from './data/combatData';
 import { useStorage } from './hooks/useStorage';
+import { 
+  useInjuryAlertsAI, 
+  useLessonSummaryAI, 
+  useMotivationalMessageAI 
+} from './hooks/useAIFeatures';
+
+import { CombatFocusCard } from './components/CombatFocusCard';
+import { ScenarioSimulator } from './components/ScenarioSimulator';
+import { DrillDetail } from './components/DrillDetail';
 
 // --- Types ---
 interface LogEntry {
@@ -252,47 +261,6 @@ const DifficultyFilter = React.memo(({ selected, onSelect }: { selected: string,
   </div>
 ));
 
-const ScenarioOutcomeCard = React.memo(({ outcome, score, onContinue }: { outcome: 'success' | 'failure', score: number, onContinue: () => void }) => {
-  useEffect(() => {
-    triggerHaptic(outcome === 'success' ? 'heavy' : 'error');
-  }, [outcome]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className={`bg-[#1A1B1E] border-2 rounded-2xl p-8 text-center ${outcome === 'success' ? 'border-green-500' : 'border-[#FF4444]'}`}
-    >
-      <motion.h2
-        className={`text-3xl font-black mb-4 uppercase tracking-tighter ${outcome === 'success' ? 'text-green-500' : 'text-[#FF4444]'}`}
-        animate={{ y: 0, opacity: 1 }}
-        initial={{ y: -20, opacity: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        {outcome === 'success' ? '⚔ VICTORY' : '❌ COMPROMISED'}
-      </motion.h2>
-      <motion.div
-        className="mb-8"
-        animate={{ y: 0, opacity: 1 }}
-        initial={{ y: 20, opacity: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <p className="text-[#8E9299] text-xs font-mono uppercase mb-1">Mission Success Rate</p>
-        <span className={`text-5xl font-black ${outcome === 'success' ? 'text-white' : 'text-[#FF4444]'}`}>{score}%</span>
-      </motion.div>
-      <motion.button
-        onClick={() => { triggerHaptic('medium'); onContinue(); }}
-        className="w-full py-4 bg-[#FF4444] rounded-xl font-bold text-white uppercase tracking-widest"
-        whileTap={{ scale: 0.95 }}
-        transition={{ duration: 0.15 }}
-      >
-        CONTINUE →
-      </motion.button>
-    </motion.div>
-  );
-});
-
 // --- Scanner Component ---
 
 const QrScanner = ({ onScan, onClose }: { onScan: (data: string) => void, onClose: () => void }) => {
@@ -421,12 +389,34 @@ export default function App() {
   const [activeDrill, setActiveDrill] = useState<CombatDrill | null>(null);
   const [activeLesson, setActiveLesson] = useState<MicroLesson | null>(null);
   const [activeScenario, setActiveScenario] = useState<CombatScenario | null>(null);
+  const [lastChoiceAction, setLastChoiceAction] = useState<string>('');
   const [scenarioNodeId, setScenarioNodeId] = useState<string>('start');
   const [scenarioDamage, setScenarioDamage] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
   const [showQuizResult, setShowQuizResult] = useState(false);
   const [drillDifficulty, setDrillDifficulty] = useState('Beginner');
   const [drillPillarFilter, setDrillPillarFilter] = useState<PillarId | null>(null);
+
+  // AI Hooks
+  const { alert: aiInjuryAlert, checkInjuryRisk } = useInjuryAlertsAI();
+  const { summary: aiLessonSummary, fetchSummary } = useLessonSummaryAI();
+  const { message: aiMotivation, fetchMessage: fetchAiMotivation } = useMotivationalMessageAI();
+
+  useEffect(() => {
+    if (activeDrill) {
+      checkInjuryRisk(injuries.filter(i => !i.recovered).map(i => i.bodyPart), activeDrill.id);
+    }
+  }, [activeDrill, checkInjuryRisk, injuries]);
+
+  useEffect(() => {
+    if (activeLesson) {
+      fetchSummary(activeLesson.title, combatProgress.pillars[activeLesson.pillar].level);
+    }
+  }, [activeLesson, fetchSummary, combatProgress.pillars]);
+
+  useEffect(() => {
+    fetchAiMotivation(benchmarks);
+  }, [fetchAiMotivation, benchmarks]);
 
   const handleDrillClick = React.useCallback((drill: CombatDrill) => {
     setActiveDrill(drill);
@@ -439,6 +429,7 @@ export default function App() {
   const handleScenarioClick = React.useCallback((scenario: CombatScenario) => {
     setActiveScenario(scenario);
     setScenarioNodeId('start');
+    setLastChoiceAction('');
     setScenarioDamage(0);
   }, []);
 
@@ -837,7 +828,7 @@ export default function App() {
             exit={{ opacity: 0, x: 100 }}
             className="fixed inset-0 top-16 bg-[#0A0B0D] z-40 p-6 flex flex-col gap-4 overflow-y-auto"
           >
-            {['dashboard', 'progression', 'combat', 'skills', 'scenarios', 'courses', 'stats', 'reference', 'assessment', 'sync', 'philosophy'].map((tab) => (
+            {['dashboard', 'progression', 'combat', 'scenarios', 'courses', 'skills', 'stats', 'reference', 'assessment', 'sync', 'philosophy'].map((tab) => (
               <button 
                 key={tab}
                 onClick={() => { setActiveTab(tab); setIsMenuOpen(false); }}
@@ -875,75 +866,7 @@ export default function App() {
             </Card>
 
             {/* Combat Focus Today Card */}
-            <Card className="bg-[#1A1B1E] border border-[#FF4444]/20">
-              <div className="flex justify-between items-center mb-4">
-                <SectionHeader title="Combat Focus Today" icon={Target} />
-                <span className="text-[10px] font-mono text-[#FF4444] uppercase bg-[#FF4444]/10 px-2 py-1 rounded">AI Selected</span>
-              </div>
-              {(() => {
-                const focusPillarId = getAiFocusPillar();
-                const pillar = combatProgress.pillars[focusPillarId];
-                const drill = COMBAT_DRILLS.find(d => d.pillar === focusPillarId);
-                const lesson = MICRO_LESSONS.find(l => l.pillar === focusPillarId);
-                const scenario = COMBAT_SCENARIOS.find(s => s.pillar === focusPillarId);
-                
-                return (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#2A2B2E] rounded-lg flex items-center justify-center">
-                        <Zap className="w-5 h-5 text-[#FF4444]" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold uppercase">{pillar.name}</h4>
-                        <p className="text-[10px] text-[#8E9299] uppercase font-mono">Level: {pillar.level}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 gap-2">
-                      {drill && (
-                        <motion.button 
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => { triggerHaptic('light'); handleDrillClick(drill); setActiveTab('combat'); }} 
-                          className="flex items-center justify-between p-3 bg-[#0A0B0D] rounded-lg border border-[#2A2B2E] hover:border-[#FF4444]/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <PlayCircle className="w-4 h-4 text-[#FF4444]" />
-                            <span className="text-xs font-bold">{drill.name}</span>
-                          </div>
-                          <ChevronRight className="w-3 h-3 text-[#8E9299]" />
-                        </motion.button>
-                      )}
-                      {lesson && (
-                        <motion.button 
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => { triggerHaptic('light'); handleLessonClick(lesson); setActiveTab('combat'); }} 
-                          className="flex items-center justify-between p-3 bg-[#0A0B0D] rounded-lg border border-[#2A2B2E] hover:border-[#FF4444]/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-[#FF4444]" />
-                            <span className="text-xs font-bold">{lesson.title}</span>
-                          </div>
-                          <ChevronRight className="w-3 h-3 text-[#8E9299]" />
-                        </motion.button>
-                      )}
-                      {scenario && (
-                        <motion.button 
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => { triggerHaptic('light'); handleScenarioClick(scenario); setActiveTab('combat'); }} 
-                          className="flex items-center justify-between p-3 bg-[#0A0B0D] rounded-lg border border-[#2A2B2E] hover:border-[#FF4444]/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Target className="w-4 h-4 text-[#FF4444]" />
-                            <span className="text-xs font-bold">{scenario.title}</span>
-                          </div>
-                          <ChevronRight className="w-3 h-3 text-[#8E9299]" />
-                        </motion.button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-            </Card>
+            <CombatFocusCard />
 
             <div className="grid grid-cols-2 gap-4">
               <Card className="flex flex-col items-center text-center py-6">
@@ -1194,7 +1117,7 @@ export default function App() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-lg font-bold uppercase tracking-tighter">{pillar.name}</h3>
-                          <p className="text-xs text-[#8E9299] mt-1">{pillar.description}</p>
+                          <p className="text-xs text-[#8E9299]">{pillar.description}</p>
                         </div>
                         <div className="text-right">
                           <span className="text-xl font-bold text-[#FF4444]">{pillar.progressPercent}%</span>
@@ -1283,7 +1206,11 @@ export default function App() {
                     </div>
 
                     <div className="pt-6 border-t border-[#2A2B2E]">
-                      <h3 className="text-xs font-mono uppercase text-[#8E9299] mb-4 tracking-widest">Form Checklist</h3>
+                      <DrillDetail drillId={activeDrill.id} difficulty={activeDrill.difficulty as any} />
+                    </div>
+
+                    <div className="pt-6 border-t border-[#2A2B2E]">
+                      <h3 className="text-xs font-mono uppercase text-[#8E9299] mb-2 tracking-widest">Form Checklist</h3>
                       <div className="space-y-2">
                         {activeDrill.formChecklist.map((item, i) => (
                           <ChecklistItem 
@@ -1343,7 +1270,7 @@ export default function App() {
                   <h2 className="text-2xl font-bold uppercase tracking-tight mb-4">{activeLesson.title}</h2>
                   
                   <div className="bg-[#0A0B0D] p-6 rounded-xl border border-[#2A2B2E] mb-8">
-                    <p className="text-sm leading-relaxed text-[#E6E6E6] whitespace-pre-line">
+                    <p className="text-sm leading-relaxed text-[#E6E6E6]">
                       {activeLesson.concept}
                     </p>
                   </div>
@@ -1443,15 +1370,15 @@ export default function App() {
                     const isEnd = !node.choices || node.choices.length === 0;
                     
                     if (isEnd) {
-                      const outcome = scenarioDamage < 50 ? 'success' : 'failure';
                       return (
-                        <ScenarioOutcomeCard 
-                          outcome={outcome} 
-                          score={100 - scenarioDamage} 
-                          onContinue={() => {
-                            if (outcome === 'success') updateCombatXp(activeScenario.pillar, 150);
+                        <ScenarioSimulator 
+                          scenarioId={activeScenario.id}
+                          userChoice={lastChoiceAction || 'NONE'}
+                          stats={{ damage: scenarioDamage, currentWeek }}
+                          onContinue={(score, success) => {
+                            if (success) updateCombatXp(activeScenario.pillar, 150);
                             setActiveScenario(null);
-                          }} 
+                          }}
                         />
                       );
                     }
@@ -1476,7 +1403,15 @@ export default function App() {
                               onClick={() => {
                                 triggerHaptic('medium');
                                 setScenarioNodeId(choice.nextNodeId);
-                                setScenarioDamage(prev => Math.min(100, prev + node.damageAccumulation + (choice.riskModifier * 20)));
+                                setLastChoiceAction(choice.action);
+                                const newDamage = Math.min(100, scenarioDamage + node.damageAccumulation + (choice.riskModifier * 20));
+                                setScenarioDamage(newDamage);
+                                
+                                // Check if this choice leads to an end node
+                                const nextNode = activeScenario.nodes[choice.nextNodeId];
+                                if (!nextNode.choices || nextNode.choices.length === 0) {
+                                  // Handled by ScenarioSimulator
+                                }
                               }}
                               className="w-full text-left p-4 bg-[#1A1B1E] border border-[#2A2B2E] rounded-lg hover:border-[#FF4444] transition-all group"
                             >
@@ -1936,7 +1871,7 @@ export default function App() {
                       <div>
                         <p className="text-[10px] font-mono uppercase text-[#8E9299] mb-1">Adjustment Protocol</p>
                         <ul className="text-sm space-y-1">
-                          {flag.protocol.map((p, i) => <li key={i} className="text-[#E6E6E6] flex gap-2"><span className="text-[#FF4444]">{i+1}.</span> {p}</li>)}
+                          {flag.protocol.map((p, i) => <li key={i} className="text-[#E6E6E6]"><span className="text-[#FF4444]">{i+1}.</span> {p}</li>)}
                         </ul>
                       </div>
                     </div>
