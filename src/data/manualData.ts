@@ -169,11 +169,11 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Master the machete and knife in combat scenarios.",
     difficulty: "Advanced",
     videos: [
-      { id: "bm-1", title: "Machete Fundamental Cuts", duration: "5 min", description: "Basic 5-angle striking system.", url: "/videos/placeholder.mp4" },
-      { id: "bm-2", title: "Advanced Blade Combinations", duration: "7 min", description: "Flowing between angles.", url: "/videos/placeholder.mp4", prerequisite: "bm-1" },
-      { id: "bm-3", title: "Defensive Blade Techniques", duration: "6 min", description: "Parries and counters.", url: "/videos/placeholder.mp4", prerequisite: "bm-2" },
-      { id: "bm-4", title: "Weapon Speed & Precision Training", duration: "8 min", description: "Targeting drills.", url: "/videos/placeholder.mp4", prerequisite: "bm-3" },
-      { id: "bm-5", title: "Blade Maintenance & Combat Readiness", duration: "4 min", description: "Field sharpening.", url: "/videos/placeholder.mp4", prerequisite: "bm-4" }
+      { id: "bm-1", title: "Machete Fundamental Cuts", duration: "5 min", description: "Basic 5-angle striking system.", url: "https://www.youtube.com/embed/XsqMGYbWpzI" },
+      { id: "bm-2", title: "Advanced Blade Combinations", duration: "7 min", description: "Flowing between angles.", url: "https://www.youtube.com/embed/zVCDVx9OhYA", prerequisite: "bm-1" },
+      { id: "bm-3", title: "Defensive Blade Techniques", duration: "6 min", description: "Parries and counters.", url: "https://www.youtube.com/embed/Tz8pLrH5qIY", prerequisite: "bm-2" },
+      { id: "bm-4", title: "Weapon Speed & Precision Training", duration: "8 min", description: "Targeting drills.", url: "https://www.youtube.com/embed/BdXYqKs1z7c", prerequisite: "bm-3" },
+      { id: "bm-5", title: "Blade Maintenance & Combat Readiness", duration: "4 min", description: "Field sharpening.", url: "https://www.youtube.com/embed/tAxfxnkwzRo", prerequisite: "bm-4" }
     ]
   },
   {
@@ -182,12 +182,12 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Survival and combat tactics for the solo operator.",
     difficulty: "Intermediate",
     videos: [
-      { id: "ls-1", title: "Situational Awareness for Solo Combat", duration: "7 min", description: "Scanning and threat detection.", url: "/videos/placeholder.mp4" },
-      { id: "ls-2", title: "De-escalation & Combat Decision Making", duration: "6 min", description: "When to fight, when to move.", url: "/videos/placeholder.mp4", prerequisite: "ls-1" },
-      { id: "ls-3", title: "Pressure Testing Under Stress", duration: "8 min", description: "Mental fortitude drills.", url: "/videos/placeholder.mp4", prerequisite: "ls-2" },
-      { id: "ls-4", title: "Multi-Opponent Scenario Training", duration: "9 min", description: "Managing multiple threats.", url: "/videos/placeholder.mp4", prerequisite: "ls-3" },
-      { id: "ls-5", title: "Weapon Transitions in Combat", duration: "7 min", description: "Switching between tools.", url: "/videos/placeholder.mp4", prerequisite: "ls-4" },
-      { id: "ls-6", title: "Combat Endurance & Mental Toughness", duration: "8 min", description: "Pushing past the limit.", url: "/videos/placeholder.mp4", prerequisite: "ls-5" }
+      { id: "ls-1", title: "Situational Awareness for Solo Combat", duration: "7 min", description: "Scanning and threat detection.", url: "https://www.youtube.com/embed/dJy8TxHqQF8" },
+      { id: "ls-2", title: "De-escalation & Combat Decision Making", duration: "6 min", description: "When to fight, when to move.", url: "https://www.youtube.com/embed/IQU6d-VF4dM", prerequisite: "ls-1" },
+      { id: "ls-3", title: "Pressure Testing Under Stress", duration: "8 min", description: "Mental fortitude drills.", url: "https://www.youtube.com/embed/5aQ1Ib-Pz5Q", prerequisite: "ls-2" },
+      { id: "ls-4", title: "Multi-Opponent Scenario Training", duration: "9 min", description: "Managing multiple threats.", url: "https://www.youtube.com/embed/Uz2Hq7xH_5g", prerequisite: "ls-3" },
+      { id: "ls-5", title: "Weapon Transitions in Combat", duration: "7 min", description: "Switching between tools.", url: "https://www.youtube.com/embed/w8epoVXqvW0", prerequisite: "ls-4" },
+      { id: "ls-6", title: "Combat Endurance & Mental Toughness", duration: "8 min", description: "Pushing past the limit.", url: "https://www.youtube.com/embed/4E6_b8-1eVc", prerequisite: "ls-5" }
     ]
   },
   {
@@ -196,10 +196,10 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Refining the power and conditioning core.",
     difficulty: "Advanced",
     videos: [
-      { id: "mt-1", title: "Clinch Dominance Techniques", duration: "8 min", description: "Controlling the inside space.", url: "/videos/placeholder.mp4" },
-      { id: "mt-2", title: "Explosive Combo Chains", duration: "7 min", description: "Linking strikes for maximum impact.", url: "/videos/placeholder.mp4", prerequisite: "mt-1" },
-      { id: "mt-3", title: "Movement & Distance Management", duration: "6 min", description: "Controlling the range.", url: "/videos/placeholder.mp4", prerequisite: "mt-2" },
-      { id: "mt-4", title: "Combat Pressure Application", duration: "8 min", description: "Applying relentless pressure.", url: "/videos/placeholder.mp4", prerequisite: "mt-3" }
+      { id: "mt-1", title: "Clinch Dominance Techniques", duration: "8 min", description: "Controlling the inside space.", url: "https://www.youtube.com/embed/mITGjvyJn6A" },
+      { id: "mt-2", title: "Explosive Combo Chains", duration: "7 min", description: "Linking strikes for maximum impact.", url: "https://www.youtube.com/embed/qm-Fl8vbS9Q", prerequisite: "mt-1" },
+      { id: "mt-3", title: "Movement & Distance Management", duration: "6 min", description: "Controlling the range.", url: "https://www.youtube.com/embed/KH0jCXvFVz4", prerequisite: "mt-2" },
+      { id: "mt-4", title: "Combat Pressure Application", duration: "8 min", description: "Applying relentless pressure.", url: "https://www.youtube.com/embed/w-hMoW4QHEU", prerequisite: "mt-3" }
     ]
   },
   {
@@ -208,11 +208,11 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Using the terrain as a weapon.",
     difficulty: "Intermediate",
     videos: [
-      { id: "lw-1", title: "Terrain Utilization in Combat", duration: "6 min", description: "Cover and concealment.", url: "/videos/placeholder.mp4" },
-      { id: "lw-2", title: "Ground Movement & Positioning", duration: "7 min", description: "Low crawl and stealth movement.", url: "/videos/placeholder.mp4", prerequisite: "lw-1" },
-      { id: "lw-3", title: "Climbing Under Combat Load", duration: "5 min", description: "Ascending with gear.", url: "/videos/placeholder.mp4", prerequisite: "lw-2" },
-      { id: "lw-4", title: "Environment Weapons", duration: "6 min", description: "Improvising from nature.", url: "/videos/placeholder.mp4", prerequisite: "lw-3" },
-      { id: "lw-5", title: "Survival Combat Integration", duration: "7 min", description: "Merging combat and survival.", url: "/videos/placeholder.mp4", prerequisite: "lw-4" }
+      { id: "lw-1", title: "Terrain Utilization in Combat", duration: "6 min", description: "Cover and concealment.", url: "https://www.youtube.com/embed/bU5VoNh8VdA" },
+      { id: "lw-2", title: "Ground Movement & Positioning", duration: "7 min", description: "Low crawl and stealth movement.", url: "https://www.youtube.com/embed/37-7mlmwbfI", prerequisite: "lw-1" },
+      { id: "lw-3", title: "Climbing Under Combat Load", duration: "5 min", description: "Ascending with gear.", url: "https://www.youtube.com/embed/p3R1YZVPaAk", prerequisite: "lw-2" },
+      { id: "lw-4", title: "Environment Weapons", duration: "6 min", description: "Improvising from nature.", url: "https://www.youtube.com/embed/v8MfXMHBCmU", prerequisite: "lw-3" },
+      { id: "lw-5", title: "Survival Combat Integration", duration: "7 min", description: "Merging combat and survival.", url: "https://www.youtube.com/embed/fB3mGH2p8vQ", prerequisite: "lw-4" }
     ]
   },
   {
@@ -221,10 +221,10 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Building the physical engine for survival.",
     difficulty: "Advanced",
     videos: [
-      { id: "cc-1", title: "Explosive Power Development", duration: "7 min", description: "Plyometrics for combat.", url: "/videos/placeholder.mp4" },
-      { id: "cc-2", title: "Combat Cardio (High-Intensity Protocols)", duration: "8 min", description: "Tabata and interval training.", url: "/videos/placeholder.mp4", prerequisite: "cc-1" },
-      { id: "cc-3", title: "Grip & Weapon Endurance", duration: "6 min", description: "Forearm and hand strength.", url: "/videos/placeholder.mp4", prerequisite: "cc-2" },
-      { id: "cc-4", title: "Mental Fortitude Training", duration: "7 min", description: "Breathwork under fatigue.", url: "/videos/placeholder.mp4", prerequisite: "cc-3" }
+      { id: "cc-1", title: "Explosive Power Development", duration: "7 min", description: "Plyometrics for combat.", url: "https://www.youtube.com/embed/F8jddaKqI0g" },
+      { id: "cc-2", title: "Combat Cardio (High-Intensity Protocols)", duration: "8 min", description: "Tabata and interval training.", url: "https://www.youtube.com/embed/nHXGVzwQ6lI", prerequisite: "cc-1" },
+      { id: "cc-3", title: "Grip & Weapon Endurance", duration: "6 min", description: "Forearm and hand strength.", url: "https://www.youtube.com/embed/ELeC6mxxfb4", prerequisite: "cc-2" },
+      { id: "cc-4", title: "Mental Fortitude Training", duration: "7 min", description: "Breathwork under fatigue.", url: "https://www.youtube.com/embed/qH8d-N_bUSw", prerequisite: "cc-3" }
     ]
   },
   {
@@ -233,10 +233,10 @@ export const COMBAT_COURSES: CombatCourse[] = [
     description: "Surviving when you are caught without a tool.",
     difficulty: "Intermediate",
     videos: [
-      { id: "ud-1", title: "Vulnerability Awareness", duration: "6 min", description: "Identifying weak points.", url: "/videos/placeholder.mp4" },
-      { id: "ud-2", title: "Evasive Footwork", duration: "7 min", description: "Creating distance and angles.", url: "/videos/placeholder.mp4", prerequisite: "ud-1" },
-      { id: "ud-3", title: "Counter-Striking Basics", duration: "8 min", description: "Turning defense into offense.", url: "/videos/placeholder.mp4", prerequisite: "ud-2" },
-      { id: "ud-4", title: "Escaping the Clinch", duration: "6 min", description: "Breaking contact safely.", url: "/videos/placeholder.mp4", prerequisite: "ud-3" }
+      { id: "ud-1", title: "Vulnerability Awareness", duration: "6 min", description: "Identifying weak points.", url: "https://www.youtube.com/embed/hDZUJYKgAqk" },
+      { id: "ud-2", title: "Evasive Footwork", duration: "7 min", description: "Creating distance and angles.", url: "https://www.youtube.com/embed/eXQ4hjS4DxA", prerequisite: "ud-1" },
+      { id: "ud-3", title: "Counter-Striking Basics", duration: "8 min", description: "Turning defense into offense.", url: "https://www.youtube.com/embed/5xkl3Gy9HkA", prerequisite: "ud-2" },
+      { id: "ud-4", title: "Escaping the Clinch", duration: "6 min", description: "Breaking contact safely.", url: "https://www.youtube.com/embed/KSCZ1I0w-FI", prerequisite: "ud-3" }
     ]
   }
 ];
