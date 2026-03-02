@@ -26,3 +26,9 @@ export {
   type InjuryAlert,
   type LessonSummary
 } from './combatAI';
+
+export {
+  videoService,
+  type VideoFile,
+  type VideoLibrary
+} from './videoService';
