@@ -82,6 +82,16 @@ import {
   PillarId
 } from './data/combatData';
 import { useStorage } from './hooks/useStorage';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { NotificationCenter } from './components/NotificationCenter';
+import { NotificationContext } from './contexts/NotificationContext';
+import { LoadingSkeleton } from './components/LoadingSkeleton';
+import { useOfflineStatus } from './hooks/useOfflineStatus';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useFavorites } from './hooks/useFavorites';
+import { useHistory } from './hooks/useHistory';
+import { useAchievements } from './hooks/useAchievements';
+import { useUndoRedo } from './hooks/useUndoRedo';
 
 // --- Types ---
 interface LogEntry {
@@ -369,93 +379,12 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
           <span className="text-[10px] text-[#8E9299] uppercase font-mono">min</span>
         </div>
       </div>
-    </div>
+        </div>
+        <NotificationCenter />
+      </NotificationContext.Provider>
+    </ErrorBoundary>
   );
-};
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [currentWeek, setCurrentWeek] = useStorage('currentWeek', 1);
-  const [logs, setLogs] = useStorage<LogEntry[]>('logs', []);
-  const [benchmarks, setBenchmarks] = useStorage<Benchmarks>('benchmarks', {
-    pushups: 0,
-    squats: 0,
-    plank: 0,
-    walk5km: false,
-    history: []
-  });
-  const [courseProgress, setCourseProgress] = useStorage<Record<string, string[]>>('courseProgress', {});
-  const [customBlocks, setCustomBlocks] = useStorage<Record<string, CustomBlockSegment[]>>('customBlocks', {
-    "Standard": [
-      { id: "s1", label: "Arrival & Preparation", duration: 15, enabled: true, type: "prep" },
-      { id: "s2", label: "Warm-Up & Mobility", duration: 15, enabled: true, type: "warmup" },
-      { id: "s3", label: "Muay Thai Engine", duration: 45, enabled: true, type: "combat" },
-      { id: "s4", label: "Transition & Hydration", duration: 15, enabled: true, type: "break" },
-      { id: "s5", label: "Blade & Weaponsmith", duration: 45, enabled: true, type: "weapon" },
-      { id: "s6", label: "Transition & Breath", duration: 15, enabled: true, type: "break" },
-      { id: "s7", label: "Land OR Field", duration: 30, enabled: true, type: "land" },
-      { id: "s8", label: "Cool-Down & Log", duration: 15, enabled: true, type: "cooldown" }
-    ]
-  });
-  const [activeBlockTemplate, setActiveBlockTemplate] = useStorage('activeBlockTemplate', 'Standard');
-  const [searchHistory, setSearchHistory] = useStorage<string[]>('searchHistory', []);
-  const [injuries, setInjuries] = useStorage<AppState['injuries']>('injuries', []);
-  const [combatProgress, setCombatProgress] = useStorage<CombatProgressState>('combatProgress', {
-    pillars: {
-      striking: { id: 'striking', name: 'Striking', description: 'Power, speed, and precision in empty-hand combat.', xp: 0, level: 'Beginner', progressPercent: 0, daysWithoutPractice: 0, rustyFlag: false },
-      grappling: { id: 'grappling', name: 'Grappling', description: 'Control, escapes, and survival on the ground.', xp: 0, level: 'Beginner', progressPercent: 0, daysWithoutPractice: 0, rustyFlag: false },
-      weaponTransitions: { id: 'weaponTransitions', name: 'Weapon Transitions', description: 'Seamlessly bridging the gap between hands and tools.', xp: 0, level: 'Beginner', progressPercent: 0, daysWithoutPractice: 0, rustyFlag: false }
-    },
-    completedDrills: [],
-    completedLessons: [],
-    completedScenarios: []
-  });
-  
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
-  const [qrData, setQrData] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [showCustomize, setShowCustomize] = useState(false);
-  const [activeDrill, setActiveDrill] = useState<CombatDrill | null>(null);
-  const [activeLesson, setActiveLesson] = useState<MicroLesson | null>(null);
-  const [activeScenario, setActiveScenario] = useState<CombatScenario | null>(null);
-  const [scenarioNodeId, setScenarioNodeId] = useState<string>('start');
-  const [scenarioDamage, setScenarioDamage] = useState(0);
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
-  const [showQuizResult, setShowQuizResult] = useState(false);
-  const [drillDifficulty, setDrillDifficulty] = useState('Beginner');
-  const [drillPillarFilter, setDrillPillarFilter] = useState<PillarId | null>(null);
-
-  const handleDrillClick = React.useCallback((drill: CombatDrill) => {
-    setActiveDrill(drill);
-  }, []);
-
-  const handleLessonClick = React.useCallback((lesson: MicroLesson) => {
-    setActiveLesson(lesson);
-  }, []);
-
-  const handleScenarioClick = React.useCallback((scenario: CombatScenario) => {
-    setActiveScenario(scenario);
-    setScenarioNodeId('start');
-    setScenarioDamage(0);
-  }, []);
-
-  const weekData = WEEKS.find(w => w.week === currentWeek) || WEEKS[0];
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    // PWA Registration
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(reg => console.log('SW registered', reg))
-        .catch(err => console.log('SW failed', err));
-    }
+}
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -761,7 +690,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0B0D] text-white font-sans selection:bg-[#FF4444]/30">
+    <ErrorBoundary>
+      <NotificationContext.Provider value={{ notifications: [], addNotification: () => {} }}>
+        <div className="min-h-screen bg-[#0A0B0D] text-white font-sans selection:bg-[#FF4444]/30">
       {/* --- Navigation --- */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-[#151619]/80 backdrop-blur-md border-b border-[#2A2B2E] z-50 flex items-center justify-between px-6">
         <div className="flex items-center gap-4">
