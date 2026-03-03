@@ -379,18 +379,9 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
           <span className="text-[10px] text-[#8E9299] uppercase font-mono">min</span>
         </div>
       </div>
-        </div>
-        <NotificationCenter />
-      </NotificationContext.Provider>
-    </ErrorBoundary>
+    </div>
   );
-}
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+};
 
   // --- Search Logic ---
   const searchItems = () => {
@@ -2027,7 +2018,10 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
         <TabButton active={activeTab === 'assessment'} onClick={() => setActiveTab('assessment')} icon={BookOpen} label="Log" />
         <TabButton active={activeTab === 'sync'} onClick={() => setActiveTab('sync')} icon={RefreshCw} label="Sync" />
       </div>
-    </div>
+      </div>
+      <NotificationCenter />
+    </NotificationContext.Provider>
+    </ErrorBoundary>
   );
 }
 
