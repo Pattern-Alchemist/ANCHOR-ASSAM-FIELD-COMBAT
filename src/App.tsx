@@ -2018,8 +2018,8 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
         <TabButton active={activeTab === 'assessment'} onClick={() => setActiveTab('assessment')} icon={BookOpen} label="Log" />
         <TabButton active={activeTab === 'sync'} onClick={() => setActiveTab('sync')} icon={RefreshCw} label="Sync" />
       </div>
-      </div>
       <NotificationCenter />
+    </div>
     </NotificationContext.Provider>
     </ErrorBoundary>
   );
