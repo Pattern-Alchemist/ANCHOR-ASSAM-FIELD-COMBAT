@@ -82,16 +82,6 @@ import {
   PillarId
 } from './data/combatData';
 import { useStorage } from './hooks/useStorage';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { NotificationCenter } from './components/NotificationCenter';
-import { NotificationContext } from './contexts/NotificationContext';
-import { LoadingSkeleton } from './components/LoadingSkeleton';
-import { useOfflineStatus } from './hooks/useOfflineStatus';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { useFavorites } from './hooks/useFavorites';
-import { useHistory } from './hooks/useHistory';
-import { useAchievements } from './hooks/useAchievements';
-import { useUndoRedo } from './hooks/useUndoRedo';
 
 // --- Types ---
 interface LogEntry {
@@ -681,9 +671,7 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
   };
 
   return (
-    <ErrorBoundary>
-      <NotificationContext.Provider value={{ notifications: [], addNotification: () => {} }}>
-        <div className="min-h-screen bg-[#0A0B0D] text-white font-sans selection:bg-[#FF4444]/30">
+    <div className="min-h-screen bg-[#0A0B0D] text-white font-sans selection:bg-[#FF4444]/30">
       {/* --- Navigation --- */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-[#151619]/80 backdrop-blur-md border-b border-[#2A2B2E] z-50 flex items-center justify-between px-6">
         <div className="flex items-center gap-4">
@@ -2018,10 +2006,7 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
         <TabButton active={activeTab === 'assessment'} onClick={() => setActiveTab('assessment')} icon={BookOpen} label="Log" />
         <TabButton active={activeTab === 'sync'} onClick={() => setActiveTab('sync')} icon={RefreshCw} label="Sync" />
       </div>
-      <NotificationCenter />
     </div>
-    </NotificationContext.Provider>
-    </ErrorBoundary>
   );
 }
 
