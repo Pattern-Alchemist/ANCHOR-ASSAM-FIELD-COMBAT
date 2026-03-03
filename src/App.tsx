@@ -373,6 +373,37 @@ const SortableItem = ({ id, segment, onToggle, onTimeChange }: { id: string, seg
   );
 };
 
+export default function App() {
+  // --- State Management ---
+  const { 
+    currentWeek, setCurrentWeek, 
+    logs, setLogs, 
+    benchmarks, setBenchmarks,
+    courseProgress, setCourseProgress,
+    customBlocks, setCustomBlocks,
+    activeBlockTemplate, setActiveBlockTemplate,
+    searchHistory, setSearchHistory,
+    injuries, setInjuries,
+    combatProgress, setCombatProgress
+  } = useStorage();
+
+  const [activeTab, setActiveTab] = useState<'drills' | 'skills' | 'scenarios' | 'programs' | 'reference' | 'assessment' | 'settings'>('drills');
+  const [showQr, setShowQr] = useState(false);
+  const [qrData, setQrData] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDrill, setSelectedDrill] = useState<CombatDrill | null>(null);
+  const [difficultyFilter, setDifficultyFilter] = useState('Beginner');
+  const [selectedScenario, setSelectedScenario] = useState<CombatScenario | null>(null);
+  const [scenarioTimer, setScenarioTimer] = useState(0);
+  const [showPhaseData, setShowPhaseData] = useState(false);
+  const [showNewDrill, setShowNewDrill] = useState(false);
+  const [showNewLog, setShowNewLog] = useState(false);
+  const [newLogText, setNewLogText] = useState('');
+
+  const weekData = WEEKS[currentWeek - 1];
+
   // --- Search Logic ---
   const searchItems = () => {
     if (!searchQuery) return [];
